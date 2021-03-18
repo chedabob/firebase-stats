@@ -1,0 +1,100 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require 'rubygems'
+require 'commander/import'
+require 'firebase-stats'
+require 'table_print'
+
+program :name, 'firebase-stats'
+program :version, FirebaseStats::VERSION
+program :description, 'A CLI tool to get different stats out of the huge Firebase Analytics CSV'
+program :help_formatter, Commander::HelpFormatter::TerminalCompact
+
+
+def map_platform(options)
+  raw_platform = options.platform ||= 'all'
+  platform = :all
+  platform = :ios if raw_platform.downcase.include?('ios')
+  platform = :android if raw_platform.downcase.include?('android')
+  platform
+end
+
+command :devices do |c|
+  c.syntax = 'devices <path to csv> [options]'
+  c.summary = 'Prints out device stats'
+  c.description = 'Prints out a table with all of the devices, optionally filtered by OS'
+  c.option '--friendly', 'Prints out Android device models with their human readable name (this is slow)'
+  c.option '--limit NUMBER', Integer, 'Limits number of devices output'
+  c.option '--platform STRING', String, 'Show only stats for this OS. Either ios, android or all (default)'
+
+  c.action do |args, options|
+    stats = FirebaseStats::Reader.new
+    stats.parse_file(args[0])
+
+    platform = map_platform(options)
+
+    wrapper = FirebaseStats::Wrapper.new(stats, platform)
+    tp wrapper.devices(friendly: options.friendly, limit: options.limit)
+  end
+end
+
+command :os do |c|
+  c.syntax = 'os <path to csv> [options]'
+  c.summary = 'Prints out OS stats'
+  c.description = 'Prints out the number of devices per OS version, optionally filtered by OS and grouped by major version'
+  c.option '--grouped', 'Groups minor OS versions together'
+  c.option '--version-sorted', 'Sorts by OS version instead of percentage'
+  c.option '--platform STRING', String, 'Show only stats for this OS. Either ios, android or all (default)'
+
+  c.action do |args, options|
+    stats = FirebaseStats::Reader.new
+    stats.parse_file(args[0])
+
+    platform = map_platform(options)
+
+    wrapper = FirebaseStats::Wrapper.new(stats, platform)
+
+    data = options.grouped.nil? ? wrapper.os_version : wrapper.os_grouped
+
+    p options
+    unless options.version_sorted.nil?
+      data = data.sort_by do |row|
+        row['version']
+      end.reverse
+    end
+    tp data
+  end
+end
+
+command :gender do |c|
+  c.syntax = 'gender'
+  c.summary = 'Prints out gender stats (if available)'
+  c.description = 'Prints out a table with number of users of each gender'
+
+  c.action do |args, options|
+    stats = FirebaseStats::Reader.new
+    stats.parse_file(args[0])
+
+    platform = map_platform(options)
+
+    wrapper = FirebaseStats::Wrapper.new(stats, platform)
+    tp wrapper.gender
+  end
+end
+
+command :gender_age do |c|
+  c.syntax = 'gender_age'
+  c.summary = 'Prints out age group stats (if available)'
+  c.description = 'Prints out a table with percentage of users of each gender grouped by age'
+
+  c.action do |args, options|
+    stats = FirebaseStats::Reader.new
+    stats.parse_file(args[0])
+
+    platform = map_platform(options)
+
+    wrapper = FirebaseStats::Wrapper.new(stats, platform)
+    tp wrapper.gender_age
+  end
+end

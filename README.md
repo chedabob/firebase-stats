@@ -8,7 +8,7 @@ CLI that takes in the CSV exported by Firebase Analytics and spits out some stat
 
 Install with `gem install firebase-stats`
 
-Then run `firebase-stats --help` for a list of commands
+Then run `firebase-stats <command> <path to CSV file> <options>` (see below for commands and their respective options)
 
 ## Commands
 

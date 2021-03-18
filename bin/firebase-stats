@@ -57,7 +57,6 @@ command :os do |c|
 
     data = options.grouped.nil? ? wrapper.os_version : wrapper.os_grouped
 
-    p options
     unless options.version_sorted.nil?
       data = data.sort_by do |row|
         row['version']

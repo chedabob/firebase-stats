@@ -18,7 +18,7 @@ Prints out usage by device model
 
 `--platform` Filter by platform (`ios`, `android` or `all`)
 
-`--friendly` Android model numbers are turned into their human readable names (e.g. SM-G991B becomes Samsung Galaxy S20). This is slow as it downloads a file from Google each time
+`--friendly` Android model numbers are turned into their human readable names (e.g. SM-G991B becomes Samsung Galaxy S21 5G). This is slow as it downloads a file from Google each time, and the parsing speed isn't fantastic.
 
 `--limit NUMBER` Limits the number of rows output (useful to speed up the `--friendly` option)
 

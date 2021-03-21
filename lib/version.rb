@@ -1,5 +1,5 @@
 # frozen_string_literal: true
 
-class FirebaseStats
-  VERSION = '1.0.2'
+module FirebaseStats
+  VERSION = '1.0.4'
 end

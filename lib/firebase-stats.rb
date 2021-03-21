@@ -3,3 +3,4 @@
 require 'reader'
 require 'wrapper'
 require 'version'
+require 'device_utils'

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class FirebaseStats
+module FirebaseStats
   require 'csv'
 
   # Parses the Firebase CSV file into sections

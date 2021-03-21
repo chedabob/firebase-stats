@@ -34,8 +34,8 @@ command :devices do |c|
 
     platform = map_platform(options)
 
-    wrapper = FirebaseStats::Wrapper.new(stats, platform)
-    tp wrapper.devices(friendly: options.friendly, limit: options.limit)
+    wrapper = FirebaseStats::Wrapper.new(stats)
+    tp wrapper.devices(friendly: options.friendly, limit: options.limit, platform: platform)
   end
 end
 
@@ -53,15 +53,13 @@ command :os do |c|
 
     platform = map_platform(options)
 
-    wrapper = FirebaseStats::Wrapper.new(stats, platform)
+    wrapper = FirebaseStats::Wrapper.new(stats)
 
-    data = options.grouped.nil? ? wrapper.os_version : wrapper.os_grouped
+    grouped = options.grouped || false
+    major_order = options.version_sorted || false
 
-    unless options.version_sorted.nil?
-      data = data.sort_by do |row|
-        row['version']
-      end.reverse
-    end
+    data = wrapper.os(platform: platform, grouped: grouped, major_order: major_order)
+
     tp data
   end
 end
@@ -77,7 +75,7 @@ command :gender do |c|
 
     platform = map_platform(options)
 
-    wrapper = FirebaseStats::Wrapper.new(stats, platform)
+    wrapper = FirebaseStats::Wrapper.new(stats)
     tp wrapper.gender
   end
 end
@@ -93,7 +91,7 @@ command :gender_age do |c|
 
     platform = map_platform(options)
 
-    wrapper = FirebaseStats::Wrapper.new(stats, platform)
+    wrapper = FirebaseStats::Wrapper.new(stats)
     tp wrapper.gender_age
   end
 end

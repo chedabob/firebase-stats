@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class FirebaseStats
+module FirebaseStats
   require 'csv'
   require 'android/devices'
   require 'open-uri'
@@ -8,58 +8,34 @@ class FirebaseStats
   # Transforms the parsed Firebase file into something more user friendly
   class Wrapper
     # @param [FirebaseStats::Reader] stats
-    # @param [Symbol] platform One of :all, :ios, :android
-    def initialize(stats, platform = :all)
+    def initialize(stats)
       super()
       @stats = stats
-      @platform = platform
     end
 
-    def os_version
-      filtered = filter_os(@stats.data[:os_version], @platform)
+    # Get all OS versions, grouped by Major version
+    # @param [Symbol] platform One of :all, :ios, :android
+    # @param [Boolean] grouped Group by Major OS version
+    # @param [Boolean] major_order Order by Major OS version (instead of percentage)
+    def os(platform: :all, grouped: true, major_order: true)
+      os_data = all_os
+      filtered = filter_os(os_data, platform)
 
-      cleaned = []
-      filtered.each do |row|
-        cleaned << {
-          'version' => row['OS with version'],
-          'count' => row['Users'].to_i,
-          'percentage' => as_percentage(os_total, row['Users'].to_f)
-        }
-      end
-      cleaned
+      data = if grouped
+               make_group_stats(filtered, platform)
+             else
+               filtered
+             end
+
+      major_order ? major_version_sort(data) : data
     end
 
-    def os_grouped
-      raw_os = @stats.data[:os_version]
-
-      grouped = case @platform
-                when :ios
-                  ios_os_group(raw_os)
-                when :android
-                  android_os_group(raw_os)
-                else
-                  android_os_group(raw_os).merge ios_os_group(raw_os)
-                end
-      computed = []
-      grouped.each do |k, v|
-        version_name = k
-        total = v.map { |version| version['Users'].to_i }.reduce(0, :+)
-        computed << { 'version' => version_name, 'total' => total, 'percentage' => as_percentage(os_total, total.to_f) }
-      end
-      computed
-    end
-
-    def os_total
-      filtered = filter_os(@stats.data[:os_version], @platform)
-      total = 0
-      filtered.each do |row|
-        total += row['Users'].to_i
-      end
-      total
-    end
-
-    def devices(friendly: false, limit: 10)
-      filtered = filter_device(@stats.data[:devices], @platform)
+    # Gets all devices
+    # @param [Boolean] friendly Transform the Android model numbers into their human numaes
+    # @param [Integer] limit Number of devices to turn
+    # @param [Symbol] platform One of :all, :ios, :android
+    def devices(friendly: false, limit: 10, platform: :all)
+      filtered = DeviceUtils.filter_device(@stats.data[:devices], @platform)
       filtered = filtered.take(limit || 10)
       cleaned = []
       filtered.each do |row|
@@ -113,30 +89,12 @@ class FirebaseStats
     def filter_os(os_data, platform)
       case platform
       when :android
-        os_data.select { |row| row['OS with version'].downcase.include?('android') }
+        os_data.select { |row| row['version'].downcase.include?('android') }
       when :ios
-        os_data.select { |row| row['OS with version'].downcase.include?('ios') }
+        os_data.select { |row| row['version'].downcase.include?('ios') }
       else
         os_data
       end
-    end
-
-    # @param [CSV::Table] device_data
-    # @param [Symbol] platform One of :all, :ios, :android
-    def filter_device(device_data, platform)
-      case platform
-      when :android
-        device_data.reject { |row| ios_device? row['Device model'] }
-      when :ios
-        device_data.select { |row| ios_device? row['Device model'] }
-      else
-        device_data
-      end
-    end
-
-    # @param [CSV::Row] device_name
-    def ios_device?(device_name)
-      device_name.downcase.include?('iphone') or device_name.downcase.include?('ipad') or device_name.downcase.include?('ipod')
     end
 
     def as_percentage(total, value)
@@ -149,11 +107,59 @@ class FirebaseStats
     end
 
     def ios_os_group(os_details)
-      filter_os(os_details, :ios).group_by { |row| row['OS with version'].match('(iOS [0-9]{1,2})').captures[0] }
+      filter_os(os_details, :ios).group_by { |row| row['version'].match('(iOS [0-9]{1,2})').captures[0] }
     end
 
     def android_os_group(os_details)
-      filter_os(os_details, :android).group_by { |row| row['OS with version'].match('(Android [0-9]{1,2})').captures[0] }
+      filter_os(os_details, :android).group_by { |row| row['version'].match('(Android [0-9]{1,2})').captures[0] }
+    end
+
+    # Get all OS versions
+    def all_os
+      data = @stats.data[:os_version]
+
+      data.map do |row|
+        {
+          'version' => row['OS with version'],
+          'count' => row['Users'].to_i
+        }
+      end
+    end
+
+    def make_group_stats(os_data, platform)
+      data = make_os_groups(os_data, platform)
+
+      total_devices = os_total(os_data)
+      data.map do |k, v|
+        version_name = k
+        group_total = v.map { |version| version['count'].to_i }.reduce(0, :+)
+        { 'version' => version_name,
+          'total' => group_total,
+          'percentage' => as_percentage(total_devices.to_f, group_total) }
+      end
+    end
+
+    def make_os_groups(os_data, platform)
+      case platform
+      when :ios
+        ios_os_group(os_data)
+      when :android
+        android_os_group(os_data)
+      else
+        android_os_group(os_data).merge ios_os_group(os_data)
+      end
+    end
+
+    def os_total(os_data)
+      os_data.map { |row| row['count'] }.reduce(0, :+)
+    end
+
+    def major_version_sort(data)
+      data.sort_by do |row|
+        version = row['version']
+        number = version.match('([0-9.]+)').captures[0]
+        Gem::Version.new(number)
+      end.reverse
     end
   end
 end

@@ -8,11 +8,15 @@ CLI that takes in the CSV exported by Firebase Analytics and spits out some stat
 
 Install with `gem install firebase-stats`
 
+Export the CSV from Firebase analytics (any number of platforms and time periods is fine).
+
 Then run `firebase-stats <command> <path to CSV file> <options>` (see below for commands and their respective options)
 
 ## Commands
 
 ### devices
+
+![OS Versions](doc_files/devices.png)
 
 Prints out usage by device model
 
@@ -24,6 +28,8 @@ Prints out usage by device model
 
 
 ### os
+
+![OS Versions](doc_files/os.png)
 
 Prints out usage by OS version
 

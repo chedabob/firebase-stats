@@ -28,7 +28,7 @@
     <orderEntry type="library" scope="PROVIDED" name="rspec-expectations (v3.10.1, RVM: ruby-2.4.10) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="rspec-mocks (v3.10.2, RVM: ruby-2.4.10) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="rspec-support (v3.10.2, RVM: ruby-2.4.10) [gem]" level="application" />
-    <orderEntry type="library" scope="PROVIDED" name="rubocop (v1.10.0, RVM: ruby-2.4.10) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="rubocop (v1.11.0, RVM: ruby-2.4.10) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="rubocop-ast (v1.4.1, RVM: ruby-2.4.10) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="ruby-progressbar (v1.11.0, RVM: ruby-2.4.10) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="table_print (v1.5.7, RVM: ruby-2.4.10) [gem]" level="application" />

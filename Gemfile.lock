@@ -1,3 +1,11 @@
+PATH
+  remote: .
+  specs:
+    firebase-stats (1.0.5)
+      android-devices (~> 1.0)
+      commander (~> 4.5)
+      table_print (~> 1.5)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -49,12 +57,10 @@ PLATFORMS
   x86_64-linux
 
 DEPENDENCIES
-  android-devices
-  commander
-  rake
-  rspec
-  rubocop
-  table_print
+  firebase-stats!
+  rake (~> 13)
+  rspec (~> 3.10)
+  rubocop (~> 1.10)
 
 BUNDLED WITH
    2.2.14

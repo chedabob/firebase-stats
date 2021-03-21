@@ -35,14 +35,14 @@ module FirebaseStats
     # @param [Integer] limit Number of devices to turn
     # @param [Symbol] platform One of :all, :ios, :android
     def devices(friendly: false, limit: 10, platform: :all)
-      filtered = DeviceUtils.filter_device(@stats.data[:devices], @platform)
+      filtered = DeviceUtils.filter_device(@stats.data[:devices], platform)
       filtered = filtered.take(limit || 10)
       cleaned = []
       filtered.each do |row|
         device = {
           'model' => row['Device model']
         }
-        if friendly && ((@platform == :all) || (@platform == :android))
+        if friendly && ((platform == :all) || (platform == :android))
           mapped = Android::Devices.search_by_model(row['Device model'])
           device['friendly'] = if mapped.nil?
                                  row['Device model']

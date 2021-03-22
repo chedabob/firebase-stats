@@ -16,7 +16,7 @@ Then run `firebase-stats <command> <path to CSV file> <options>` (see below for 
 
 ### devices
 
-![OS Versions](doc_files/devices.png)
+![OS Versions](doc_files/devices_new.png)
 
 Prints out usage by device model
 

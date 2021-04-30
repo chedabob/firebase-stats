@@ -17,6 +17,7 @@ Gem::Specification.new do |s|
   s.license = 'MIT'
   s.add_dependency 'android-devices', '~> 1.0'
   s.add_dependency 'commander', '~> 4.5'
+  s.add_dependency 'rexml', '~> 3.2.5'
   s.add_dependency 'table_print', '~> 1.5'
   s.add_development_dependency 'rake', '~> 13'
   s.add_development_dependency 'rspec', '~> 3.10'

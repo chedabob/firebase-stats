@@ -59,12 +59,14 @@ module FirebaseStats
         'Device model,Users' => :devices,
         'OS with version,Users' => :os_version,
         'Gender,Users' => :gender,
-        'Category,Female,Male' => :gender_age,
         'Platform,Users' => :platform,
         'Platform,Users,% Total,User engagement,Total revenue' => :platform_engagement
       }
+      cleaned_header = header.strip
+      section = mappings[cleaned_header]
 
-      mappings[header.strip]
+      section = :gender_age if section.nil? and cleaned_header.include? 'Category,'
+      section
     end
     # rubocop:enable Metrics/MethodLength
 

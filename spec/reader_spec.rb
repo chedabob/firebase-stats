@@ -188,7 +188,7 @@ RSpec.describe FirebaseStats::Reader do
     end
     it 'parses all sections' do
       expect(@stats.data).not_to be_nil
-      expect(@stats.data.length).to eq(14)
+      expect(@stats.data.length).to eq(15)
     end
   end
 
@@ -210,7 +210,7 @@ RSpec.describe FirebaseStats::Reader do
     end
     it 'parses all sections' do
       expect(@stats.data).not_to be_nil
-      expect(@stats.data.length).to eq(14)
+      expect(@stats.data.length).to eq(15)
     end
   end
 
@@ -221,7 +221,7 @@ RSpec.describe FirebaseStats::Reader do
     end
     it 'parses all sections' do
       expect(@stats.data).not_to be_nil
-      expect(@stats.data.length).to eq(14)
+      expect(@stats.data.length).to eq(15)
     end
   end
 end

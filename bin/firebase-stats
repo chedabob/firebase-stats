@@ -73,8 +73,6 @@ command :gender do |c|
     stats = FirebaseStats::Reader.new
     stats.parse_file(args[0])
 
-    platform = map_platform(options)
-
     wrapper = FirebaseStats::Wrapper.new(stats)
     tp wrapper.gender
   end
@@ -88,8 +86,6 @@ command :gender_age do |c|
   c.action do |args, options|
     stats = FirebaseStats::Reader.new
     stats.parse_file(args[0])
-
-    platform = map_platform(options)
 
     wrapper = FirebaseStats::Wrapper.new(stats)
     tp wrapper.gender_age

@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    firebase-stats (1.0.5)
+    firebase-stats (1.0.6)
       android-devices (~> 1.0)
       commander (~> 4.5)
       table_print (~> 1.5)
@@ -11,7 +11,7 @@ GEM
   specs:
     android-devices (1.0.1)
     ast (2.4.2)
-    commander (4.5.2)
+    commander (4.6.0)
       highline (~> 2.0.0)
     diff-lcs (1.4.4)
     highline (2.0.3)
@@ -51,6 +51,7 @@ GEM
     unicode-display_width (2.0.0)
 
 PLATFORMS
+  -darwin-21
   arm64-darwin-20
   x86_64-darwin-19
   x86_64-darwin-20

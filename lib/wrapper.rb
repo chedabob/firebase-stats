@@ -63,7 +63,7 @@ module FirebaseStats
       raw.each do |row|
         data << {
           'gender' => row['Gender'],
-          'count' => row['Users']
+          'count' => row['Users'].to_i
         }
       end
       data
@@ -76,7 +76,8 @@ module FirebaseStats
         data << {
           'age' => row['Category'],
           'male' => (row['Male'].to_f * 100).round(2),
-          'female' => (row['Female'].to_f * 100).round(2)
+          'female' => (row['Female'].to_f * 100).round(2),
+          'other' => (row['Other'].to_f * 100).round(2)
         }
       end
       data

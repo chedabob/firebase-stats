@@ -48,19 +48,23 @@ command :os do |c|
   c.option '--platform STRING', String, 'Show only stats for this OS. Either ios, android or all (default)'
 
   c.action do |args, options|
-    stats = FirebaseStats::Reader.new
-    stats.parse_file(args[0])
+    begin
+      stats = FirebaseStats::Reader.new
+      stats.parse_file(args[0])
 
-    platform = map_platform(options)
+      platform = map_platform(options)
 
-    wrapper = FirebaseStats::Wrapper.new(stats)
+      wrapper = FirebaseStats::Wrapper.new(stats)
 
-    grouped = options.grouped || false
-    major_order = options.version_sorted || false
+      grouped = options.grouped || false
+      major_order = options.version_sorted || false
 
-    data = wrapper.os(platform: platform, grouped: grouped, major_order: major_order)
+      data = wrapper.os(platform: platform, grouped: grouped, major_order: major_order)
 
-    tp data
+      tp data
+    rescue FirebaseStats::DataError => error
+      print_data_error(error)
+    end
   end
 end
 
@@ -90,4 +94,11 @@ command :gender_age do |c|
     wrapper = FirebaseStats::Wrapper.new(stats)
     tp wrapper.gender_age
   end
+end
+
+# @param [FirebaseStats::DataError] error
+def print_data_error(error)
+  puts "Unable to find that specific data in the input file"
+  puts "For the data you requested, the following CSV header should be contained within the file: '#{error.expected_header}'"
+  puts error.tip unless error.tip.nil?
 end

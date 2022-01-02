@@ -35,7 +35,7 @@ module FirebaseStats
     # @param [Integer] limit Number of devices to turn
     # @param [Symbol] platform One of :all, :ios, :android
     def devices(friendly: false, limit: 10, platform: :all)
-      filtered = DeviceUtils.filter_device(@stats.data[:devices], platform)
+      filtered = DeviceUtils.filter_device(@stats.get(:devices), platform)
       filtered = filtered.take(limit || 10)
       cleaned = []
       filtered.each do |row|
@@ -58,7 +58,7 @@ module FirebaseStats
     end
 
     def gender
-      raw = @stats.data[:gender]
+      raw = @stats.get(:gender)
       data = []
       raw.each do |row|
         data << {
@@ -70,7 +70,7 @@ module FirebaseStats
     end
 
     def gender_age
-      raw = @stats.data[:gender_age]
+      raw = @stats.get(:gender_age)
       data = []
       raw.each do |row|
         data << {
@@ -117,7 +117,7 @@ module FirebaseStats
 
     # Get all OS versions
     def all_os
-      data = @stats.data[:os_version]
+      data = @stats.get(:os_version)
 
       data.map do |row|
         {

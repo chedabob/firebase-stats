@@ -14,7 +14,7 @@
     <orderEntry type="library" scope="PROVIDED" name="android-devices (v1.0.1, RVM: ruby-2.4.10) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="ast (v2.4.2, RVM: ruby-2.4.10) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="bundler (v2.2.14, RVM: ruby-2.4.10) [gem]" level="application" />
-    <orderEntry type="library" scope="PROVIDED" name="commander (v4.5.2, RVM: ruby-2.4.10) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="commander (v4.6.0, RVM: ruby-2.4.10) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="diff-lcs (v1.4.4, RVM: ruby-2.4.10) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="highline (v2.0.3, RVM: ruby-2.4.10) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="parallel (v1.20.1, RVM: ruby-2.4.10) [gem]" level="application" />
@@ -33,5 +33,15 @@
     <orderEntry type="library" scope="PROVIDED" name="ruby-progressbar (v1.11.0, RVM: ruby-2.4.10) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="table_print (v1.5.7, RVM: ruby-2.4.10) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="unicode-display_width (v2.0.0, RVM: ruby-2.4.10) [gem]" level="application" />
+  </component>
+  <component name="RakeTasksCache">
+    <option name="myRootTask">
+      <RakeTaskImpl id="rake">
+        <subtasks>
+          <RakeTaskImpl description="Run RSpec code examples" fullCommand="spec" id="spec" />
+          <RakeTaskImpl description="" fullCommand="default" id="default" />
+        </subtasks>
+      </RakeTaskImpl>
+    </option>
   </component>
 </module>

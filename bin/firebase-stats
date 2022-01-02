@@ -29,13 +29,17 @@ command :devices do |c|
   c.option '--platform STRING', String, 'Show only stats for this OS. Either ios, android or all (default)'
 
   c.action do |args, options|
-    stats = FirebaseStats::Reader.new
-    stats.parse_file(args[0])
+    begin
+      stats = FirebaseStats::Reader.new
+      stats.parse_file(args[0])
 
-    platform = map_platform(options)
+      platform = map_platform(options)
 
-    wrapper = FirebaseStats::Wrapper.new(stats)
-    tp wrapper.devices(friendly: options.friendly, limit: options.limit, platform: platform)
+      wrapper = FirebaseStats::Wrapper.new(stats)
+      tp wrapper.devices(friendly: options.friendly, limit: options.limit, platform: platform)
+    rescue FirebaseStats::SectionNotFoundError => error
+      print_data_error(error)
+    end
   end
 end
 
@@ -48,19 +52,23 @@ command :os do |c|
   c.option '--platform STRING', String, 'Show only stats for this OS. Either ios, android or all (default)'
 
   c.action do |args, options|
-    stats = FirebaseStats::Reader.new
-    stats.parse_file(args[0])
+    begin
+      stats = FirebaseStats::Reader.new
+      stats.parse_file(args[0])
 
-    platform = map_platform(options)
+      platform = map_platform(options)
 
-    wrapper = FirebaseStats::Wrapper.new(stats)
+      wrapper = FirebaseStats::Wrapper.new(stats)
 
-    grouped = options.grouped || false
-    major_order = options.version_sorted || false
+      grouped = options.grouped || false
+      major_order = options.version_sorted || false
 
-    data = wrapper.os(platform: platform, grouped: grouped, major_order: major_order)
+      data = wrapper.os(platform: platform, grouped: grouped, major_order: major_order)
 
-    tp data
+      tp data
+    rescue FirebaseStats::SectionNotFoundError => error
+      print_data_error(error)
+    end
   end
 end
 
@@ -70,11 +78,15 @@ command :gender do |c|
   c.description = 'Prints out a table with number of users of each gender'
 
   c.action do |args, options|
-    stats = FirebaseStats::Reader.new
-    stats.parse_file(args[0])
+    begin
+      stats = FirebaseStats::Reader.new
+      stats.parse_file(args[0])
 
-    wrapper = FirebaseStats::Wrapper.new(stats)
-    tp wrapper.gender
+      wrapper = FirebaseStats::Wrapper.new(stats)
+      tp wrapper.gender
+    rescue FirebaseStats::SectionNotFoundError => error
+      print_data_error(error)
+    end
   end
 end
 
@@ -84,10 +96,26 @@ command :gender_age do |c|
   c.description = 'Prints out a table with percentage of users of each gender grouped by age'
 
   c.action do |args, options|
-    stats = FirebaseStats::Reader.new
-    stats.parse_file(args[0])
+    begin
+      stats = FirebaseStats::Reader.new
+      stats.parse_file(args[0])
 
-    wrapper = FirebaseStats::Wrapper.new(stats)
-    tp wrapper.gender_age
+      wrapper = FirebaseStats::Wrapper.new(stats)
+      tp wrapper.gender_age
+    rescue FirebaseStats::SectionNotFoundError => error
+      print_data_error(error)
+    end
   end
+end
+
+private
+
+
+# @param [SectionNotFoundError] error
+def print_data_error(error)
+  tip = FirebaseStats::Wrapper.tip(error.section)
+  expected_header = FirebaseStats::Reader.search_string(error.section)
+  puts "Unable to find that specific data in the input file"
+  puts "For the data you requested, the following CSV header should be contained within the file: '#{expected_header}'"
+  puts tip unless tip.nil?
 end

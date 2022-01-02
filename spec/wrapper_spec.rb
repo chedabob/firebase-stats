@@ -66,4 +66,13 @@ RSpec.describe FirebaseStats::Wrapper do
       expect(first_row['other']).not_to be_nil
     end
   end
+
+  describe 'provide error' do
+    it 'throws error when no OS data found' do
+      @stats.parse_file 'spec/test_csv/empty.csv'
+      @wrapper = FirebaseStats::Wrapper.new @stats
+
+      expect { @wrapper.os }.to raise_error FirebaseStats::SectionNotFoundError
+    end
+  end
 end

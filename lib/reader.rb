@@ -5,11 +5,19 @@ module FirebaseStats
 
   # Parses the Firebase CSV file into sections
   class Reader
-    attr_reader :data
-
     def initialize
       super
       @data = {}
+    end
+
+    def num_sections
+      @data.length
+    end
+
+    def get(section)
+      found = @data[section]
+      raise SectionNotFoundError.new(section) if found.nil?
+      found
     end
 
     # @param [String] filename
@@ -20,6 +28,7 @@ module FirebaseStats
 
     # @param [Array<String>] input
     def parse(input)
+      @data = {}
       curr_lines = []
       input.each_with_index do |line, idx|
         curr_lines.push(line) unless comment?(line) || line.strip.empty?
@@ -31,22 +40,15 @@ module FirebaseStats
       end
     end
 
-    private
-
-    # @param [Array<String>] lines
-    def process_lines(lines)
-      section = match_header lines[0]
-      return if section.nil?
-
-      parsed = CSV.parse(lines.join, headers: true)
-      @data[section] = parsed if @data[section].nil?
+    # Get the string that is used to find a given section in the CSV
+    def self.search_string(section)
+      header = Reader.mappings.key(section)
+      header = "Category,Male,Other,Female" if header.nil? and section == :gender_age
+      return header
     end
 
-    # @param [String] header
-    # @return [Symbol, nil]
-    # rubocop:disable Metrics/MethodLength
-    def match_header(header)
-      mappings = {
+    def self.mappings
+      {
         'Day,28-Day,7-Day,1-Day' => :active_users,
         'Day,Average engagement time' => :daily_engagement,
         'Page path and screen class,User engagement,Screen views' => :screens,
@@ -62,15 +64,39 @@ module FirebaseStats
         'Platform,Users' => :platform,
         'Platform,Users,% Total,User engagement,Total revenue' => :platform_engagement
       }
-      cleaned_header = header.strip
-      section = mappings[cleaned_header]
+    end
 
+    private
+
+    # @param [Array<String>] lines
+    def process_lines(lines)
+      section = match_header lines[0]
+      return if section.nil?
+
+      parsed = CSV.parse(lines.join, headers: true)
+      @data[section] = parsed if @data[section].nil?
+    end
+
+    # Maps a given CSV header to a section
+    # @param [String] header The CSV header line to parse
+    # @return [Symbol, nil] The section, or nil if not found
+    # rubocop:disable Metrics/MethodLength
+    def match_header(header)
+      # All of the section headers that can be found in the CSV file, mapping to our internal section symbols
+
+      cleaned_header = header.strip
+      section = Reader.mappings[cleaned_header]
+
+      # Kludge for gender_age parsing as the headers aren't always in the right order, so rule out
+      # all the other sections first
       section = :gender_age if section.nil? and cleaned_header.include? 'Category,'
       section
     end
     # rubocop:enable Metrics/MethodLength
 
+    # Is this line a comment
     # @param [String] line
+    # @return [Boolean]
     def comment?(line)
       line.include?('#')
     end

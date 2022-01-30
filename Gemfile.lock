@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    firebase-stats (1.0.6)
+    firebase-stats (1.0.7)
       android-devices (~> 1.0)
       commander (~> 4.5)
       table_print (~> 1.5)
